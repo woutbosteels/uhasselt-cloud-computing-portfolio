@@ -91,3 +91,12 @@ services:
     depends_on:
       - mqtt-broker
 
+  thermometer-readingroom:
+    build: ./thermometer
+    container_name: thermometer-readingroom
+    environment:
+      - BUILDING=library
+      - ROOM=readingroom
+    depends_on:
+      - mqtt-broker
+
