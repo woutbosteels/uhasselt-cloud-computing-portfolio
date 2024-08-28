@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:hx-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chatroom</title>
+<!--    <link rel="stylesheet" th:href="@{/css/application.css}">-->
+    <link rel="stylesheet" th:href="@{/css/pico.blue.min.css}">
+
+<!--
+TODO: see  https://picocss.com/docs/colors#close
+This stylesheet is almost the same size as the entire Pico library.
+We do not recommend including all colors on a production site. You should include only the color families and shades that you use.
+-->
+    <link rel="stylesheet" th:href="@{/css/pico.colors.min.css}">
+
+
+</head>
+
+<template>
+    <div id="messages" hx-swap-oob="beforeend" th:fragment="incoming-message(message)">
+        <div class="grid">
+            <div></div>
+            <div>
+                <small>They said:</small>
+                <article class="pico-color-indigo-400 pico-background-fuchsia-350">
+                    <div class="pico-color-pumpkin-100" th:text="${message}"></div>
+                </article>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template>
+    <div id="messages"  hx-swap-oob="beforeend" th:fragment="user-message(message)">
+        <div class="grid">
+            <div>
+                <small>You said:</small>
+                <article class="pico-background-indigo-600">
+                    <div class="pico-color-indigo-50" th:text="${message}"></div>
+                </article>
+            </div>
+            <div></div>
+        </div>
+    </div>
+</template>
+
+<body>
+<div>
+
+    <main class="container">
+
+        <div hx-ext="ws" ws-connect="/chatroom"
+             hx-on::ws-after-message="clearInput()"
+             hx-on::ws-after-send="scroll()"
+        >
+
+            <div>
+                <div>
+                    <p></p>
+                    <h3 class="chat-bubble">Welcome to the chat</h3>
+                </div>
+            </div>
+
+            <div id="messages">
+            </div>
+
+            <hr>
+
+            <div>
+                <form id="form" ws-send>
+                    <fieldset role="group">
+                        <input id="chat-message-input"
+                               name="chatMessage"
+                               type="text"
+                               placeholder="Write a message"
+                               autofocus>
+                        <button>Chat</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <hr id="last-line">
+            <p></p>
+
+        </div>
+
+
+    </main>
+</div>
+
+    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+
+    <script type="text/javascript" th:src="@{/webjars/htmx-ext-ws/ws.js}">
+
+    </script>
+    <script>
+        function clearInput() {
+            let element = document.getElementById('chat-message-input');
+            element.value = '';
+            element.scrollIntoView(false);
+            element.focus();
+            let last_line = document.getElementById('last-line');
+            last_line.scrollIntoView(false);
+        }
+    </script>
+
+
+</body>
+</html>

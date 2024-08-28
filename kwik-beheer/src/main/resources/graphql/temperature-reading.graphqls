@@ -1,0 +1,24 @@
+type TemperatureMeasurement {
+    id: ID!
+    celsius: Float!
+    ts: String!
+    room: Room!
+}
+
+type Room {
+    id: ID!
+    roomName: String!
+    readings: [TemperatureMeasurement]!
+    building: Building!
+}
+
+type Building {
+    id: ID!
+    buildingName: String!
+    rooms: [Room]!
+}
+
+# The Root Query for the application
+type Query {
+    recentReadings(count: Int, offset: Int): [TemperatureMeasurement]!
+}

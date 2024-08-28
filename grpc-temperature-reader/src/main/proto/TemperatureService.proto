@@ -1,0 +1,17 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package eu.bosteels.wout.grpc;
+
+message TemperatureRequest {
+  string building = 1;
+  string room = 2;
+  float celsius = 3;
+}
+
+message TemperatureResponse {
+  string summary = 1;
+}
+
+service TemperatureService {
+  rpc hello(TemperatureRequest) returns (TemperatureResponse);
+}

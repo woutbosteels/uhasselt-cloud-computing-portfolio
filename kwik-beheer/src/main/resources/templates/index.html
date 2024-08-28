@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Kwik</title>
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/pico.blue.min.css}">
+</head>
+<body>
+<div th:replace="~{header :: header}">...</div>
+<div>
+    <div class="container-fluid">
+        <h5>Buildings</h5>
+        <div id="buildings" class="grid">>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <h5>Rooms</h5>
+        <div id="rooms" class="grid">
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/js/index.js}"></script>
+</html>

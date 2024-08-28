@@ -1,0 +1,11 @@
+{
+  recentReadings(count: 5, offset: 0) {
+    celsius
+    room {
+      roomName
+      building {
+        buildingName
+      }
+    }
+  }
+}

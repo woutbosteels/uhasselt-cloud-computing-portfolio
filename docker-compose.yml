@@ -1,0 +1,93 @@
+services:
+
+  mqtt-broker:
+    image: eclipse-mosquitto
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./eclipse-mosquitto-broker/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  postgres:
+    image: postgres:16.4
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - TZ=Europe/Brussels
+    ports:
+      - "5432:5432"
+
+  kwik-spring-boot-app:
+      build: ./kwik-beheer
+      container_name: kwik-spring-boot-app
+      ports:
+        - "8080:8080"
+      environment:
+        - MQTT_BROKER_URL=tcp://mqtt-broker:1883
+      depends_on:
+        - mqtt-broker
+        - postgres
+
+  mqtt-grpc-bridge-spring-boot-app:
+    build: ./mqtt-grpc-bridge
+    container_name: mqtt-grpc-bridge
+    ports:
+      - "7070:7070"
+    environment:
+      - GRPC_HOSTNAME=grpc-temperature-reader
+      - MQTT_BROKER_URL=tcp://mqtt-broker:1883
+    depends_on:
+      - mqtt-broker
+      - grpc-temperature-reader
+
+  grpc-temperature-reader:
+    build: ./grpc-temperature-reader
+    container_name: grpc-temperature-reader
+    ports:
+      - "9090:9090"
+
+  graphql-client:
+    build: ./graphql-client
+    container_name: graphql-client
+    environment:
+      - GRAPHQL_URL=kwik-spring-boot-app
+    depends_on:
+      - kwik-spring-boot-app
+
+
+  #######   MQTT Thermometers ########
+  thermometer-bed:
+    build: ./thermometer
+    container_name: mock-thermometer
+    environment:
+      - BUILDING=home
+      - ROOM=bedroom
+    depends_on:
+      - mqtt-broker
+  thermometer-bath:
+    build: ./thermometer
+    container_name: thermometer-bath
+    environment:
+      - BUILDING=home
+      - ROOM=bathroom
+    depends_on:
+      - mqtt-broker
+
+  thermometer-living:
+    build: ./thermometer
+    container_name: thermometer-living
+    environment:
+      - BUILDING=home
+      - ROOM=livingroom
+    depends_on:
+      - mqtt-broker
+
+  thermometer-dorm:
+    build: ./thermometer
+    container_name: thermometer-dorm
+    environment:
+      - BUILDING=dorm
+      - ROOM=dormroom
+    depends_on:
+      - mqtt-broker
+
