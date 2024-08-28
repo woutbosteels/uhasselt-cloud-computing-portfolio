@@ -71,23 +71,22 @@ public class TempSocketHandler extends TextWebSocketHandler {
     }
 
     public void tempToRoom(String ts, float celsius, String building, String room) {
-        logger.info("tempToRoom: {},{},{},{}", ts, celsius, building, room);
         Optional<Room> roomOptional = roomService.getRoomIfExists(building, room);
         if (roomOptional.isPresent()) {
             List<WebSocketSession> webSocketSessions = sessionsMap.get(roomOptional.get().getId());
             if (webSocketSessions != null && !webSocketSessions.isEmpty()) {
                 sendMessageToSessions(tempReadingHTML(room, building, ts, celsius), webSocketSessions);
             } else {
-                logger.info("No WS sessions waiting for reading");
+                logger.debug("No WS sessions waiting for reading");
             }
         } else {
-            logger.info("No room with building {} and name {}", building, room);
+            logger.debug("No room with building {} and name {}", building, room);
         }
     }
 
     private void sendMessageToSessions(String message, List<WebSocketSession> webSocketSessions) {
         for (WebSocketSession webSocketSession : webSocketSessions) {
-            logger.info(webSocketSession.toString());
+            logger.debug(webSocketSession.toString());
             try {
                 if (webSocketSession.isOpen()) {
                     webSocketSession.sendMessage(new TextMessage(message));
@@ -102,7 +101,6 @@ public class TempSocketHandler extends TextWebSocketHandler {
     private String tempReadingHTML(String room, String building, String ts, float celsius)
     {
         Map<String, Object> map = new HashMap<>();
-//        map.put("message", message);
         map.put("ts", ts);
         map.put("celsius", celsius);
         map.put("building", building);
